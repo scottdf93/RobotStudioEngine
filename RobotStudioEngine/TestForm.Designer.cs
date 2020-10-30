@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TestForm));
             this.GetAllControllersButton = new System.Windows.Forms.Button();
             this.GetControllerButton = new System.Windows.Forms.Button();
             this.ControllerListView = new BrightIdeasSoftware.FastObjectListView();
@@ -230,6 +231,7 @@
             this.Controls.Add(this.ControllerListView);
             this.Controls.Add(this.GetControllerButton);
             this.Controls.Add(this.GetAllControllersButton);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "TestForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Test Form";

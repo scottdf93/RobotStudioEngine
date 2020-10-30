@@ -1,5 +1,6 @@
 ﻿using ABB.Robotics.Controllers;
 using ABB.Robotics.Controllers.Discovery;
+using ABB.Robotics.Controllers.IOSystemDomain;
 using ABB.Robotics.RobotStudio.Controllers;
 using System;
 using System.Collections.Generic;
@@ -284,6 +285,18 @@ namespace RobotStudioEngine
             }
 
             return controller;
+        }
+
+        /// <summary>
+        /// Returns a Signal from a specified controller.
+        /// </summary>
+        /// <param name="controller">Parse the ABB controller ABB.Robotics.Controllers.Controller. VC or RC</param>
+        /// <param name="signalName">Get the signal from the signal Name</param>
+        public Signal GetSignal(Controller controller, string signalName)
+        {
+            Signal signal = null;
+
+            return signal;
         }
     }
 }
