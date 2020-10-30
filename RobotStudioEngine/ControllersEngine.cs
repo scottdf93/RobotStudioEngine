@@ -296,7 +296,151 @@ namespace RobotStudioEngine
         {
             Signal signal = null;
 
+            IOSystem iOSystem = controller.IOSystem;
+
+            signal = iOSystem.GetSignal(signalName);
+
             return signal;
+        }
+
+        /// <summary>
+        /// Returns all Signals from a specified controller.
+        /// </summary>
+        /// <param name="controller">Parse the ABB controller ABB.Robotics.Controllers.Controller. VC or RC</param>
+        public SignalCollection GetAllSignal(Controller controller)
+        {
+            SignalCollection signals = null;
+
+            return signals;
+        }
+
+        /// <summary>
+        /// Returns all Digital Signals from a specified controller.
+        /// </summary>
+        /// <param name="controller">Parse the ABB controller ABB.Robotics.Controllers.Controller. VC or RC</param>
+        public SignalCollection GetAllDigialSignal(Controller controller)
+        {
+            SignalCollection signals = null;
+
+            return signals;
+        }
+
+        /// <summary>
+        /// Returns all Analog Signals from a specified controller.
+        /// </summary>
+        /// <param name="controller">Parse the ABB controller ABB.Robotics.Controllers.Controller. VC or RC</param>
+        public SignalCollection GetAllAnalogSignal(Controller controller)
+        {
+            SignalCollection signals = null;
+
+            return signals;
+        }
+
+        /// <summary>
+        /// Returns all Group Signals from a specified controller.
+        /// </summary>
+        /// <param name="controller">Parse the ABB controller ABB.Robotics.Controllers.Controller. VC or RC</param>
+        public SignalCollection GetAllGroupSignal(Controller controller)
+        {
+            SignalCollection signals = null;
+
+            return signals;
+        }
+
+        /// <summary>
+        /// Returns a collection of DI Signals from a specified controller.
+        /// </summary>
+        /// <param name="controller">Parse the ABB controller ABB.Robotics.Controllers.Controller. VC or RC</param>
+        public SignalCollection GetDigitalInputs(Controller controller)
+        {
+            SignalCollection signals = null;
+
+            return signals;
+        }
+
+        /// <summary>
+        /// Returns a collection of DO Signals from a specified controller.
+        /// </summary>
+        /// <param name="controller">Parse the ABB controller ABB.Robotics.Controllers.Controller. VC or RC</param>
+        public SignalCollection GetDigitalOutputs(Controller controller)
+        {
+            SignalCollection signals = null;
+
+            return signals;
+        }
+
+        /// <summary>
+        /// Returns a collection of AI Signals from a specified controller.
+        /// </summary>
+        /// <param name="controller">Parse the ABB controller ABB.Robotics.Controllers.Controller. VC or RC</param>
+        public SignalCollection GetAnalogInputs(Controller controller)
+        {
+            SignalCollection signals = null;
+
+            return signals;
+        }
+
+        /// <summary>
+        /// Returns a collection of AO Signals from a specified controller.
+        /// </summary>
+        /// <param name="controller">Parse the ABB controller ABB.Robotics.Controllers.Controller. VC or RC</param>
+        public SignalCollection GetAnalogOutputs(Controller controller)
+        {
+            SignalCollection signals = null;
+
+            return signals;
+        }
+
+        /// <summary>
+        /// Returns a collection of GO Signals from a specified controller.
+        /// </summary>
+        /// <param name="controller">Parse the ABB controller ABB.Robotics.Controllers.Controller. VC or RC</param>
+        public SignalCollection GetGroupOutputs(Controller controller)
+        {
+            SignalCollection signals = null;
+
+            return signals;
+        }
+
+        /// <summary>
+        /// Returns a collection of GI Signals from a specified controller.
+        /// </summary>
+        /// <param name="controller">Parse the ABB controller ABB.Robotics.Controllers.Controller. VC or RC</param>
+        public SignalCollection GetGroupInputs(Controller controller)
+        {
+            SignalCollection signals = null;
+
+            return signals;
+        }
+
+        /// <summary>
+        /// Loads a module into a specified controller.
+        /// </summary>
+        /// <param name="controller">Parse the ABB controller ABB.Robotics.Controllers.Controller. VC or RC</param>
+        /// <param name="moduleLocation">The directory of module (*.mod)</param>
+        public bool LoadModule(Controller controller, string moduleLocation)
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Loads a program into a specified controller.
+        /// </summary>
+        /// <param name="controller">Parse the ABB controller ABB.Robotics.Controllers.Controller. VC or RC</param>
+        /// <param name="programLocation">The directory of program (*.prg)</param>
+        public bool LoadProgram(Controller controller, string programLocation)
+        {
+            return true;
+        }
+
+        /// <summary>
+        /// Loads a program into a specified controller.
+        /// </summary>
+        /// <param name="controller">Parse the ABB controller ABB.Robotics.Controllers.Controller. VC or RC</param>
+        /// <param name="cfgLocation">The directory of configuration file (*.cfg)</param>
+        public bool LoadConfiguration(Controller controller, string cfgLocation)
+        {
+            return true;
         }
     }
 }
