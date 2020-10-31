@@ -2,6 +2,7 @@
 using ABB.Robotics.Controllers.Discovery;
 using ABB.Robotics.Controllers.IOSystemDomain;
 using ABB.Robotics.RobotStudio.Controllers;
+using ABB.Robotics.RobotStudio.Stations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,14 @@ namespace RobotStudioEngine
 {
     public class ControllersEngine
     {
+        public enum ControllerEngineResult
+        {
+            Success,
+            Fail
+        }
+
+        public ControllerEngineResult controllerEngineResult;
+
         /// <summary>
         /// Returns a collection of all running controllers.
         /// </summary>
@@ -37,6 +46,8 @@ namespace RobotStudioEngine
                     MessageBox.Show("Failed to run a network scan due to missing dependancies;\n\nRobotStudio.Services.RobApi.Desktop.dll", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
 
+                controllerEngineResult = ControllerEngineResult.Fail;
+
                 return controllerInfos;
             }
 
@@ -54,6 +65,8 @@ namespace RobotStudioEngine
             {
                 MessageBox.Show("Argument \"controllerType\" missing from \"GetAllAvaliableControllers\" call.", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            controllerEngineResult = ControllerEngineResult.Success;
 
             return controllerInfos;
         }
@@ -74,6 +87,10 @@ namespace RobotStudioEngine
                 try
                 {
                     controller = new Controller(networkScanner.Controllers.First(x => x.IsVirtual && x.IPAddress == ipAddress));
+
+                    controllerEngineResult = ControllerEngineResult.Success;
+
+                    return controller;
                 }
                 catch
                 {
@@ -84,13 +101,16 @@ namespace RobotStudioEngine
             {
                 try
                 {
+                    controller = new Controller(networkScanner.Controllers.First(x => !x.IsVirtual && x.IPAddress == ipAddress));
 
+                    controllerEngineResult = ControllerEngineResult.Success;
+
+                    return controller;
                 }
                 catch
                 {
                     controller = null;
                 }
-                controller = new Controller(networkScanner.Controllers.First(x => !x.IsVirtual && x.IPAddress == ipAddress));
             }
             else
             {
@@ -113,7 +133,10 @@ namespace RobotStudioEngine
                 MessageBox.Show("No controller found!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
+            controllerEngineResult = ControllerEngineResult.Fail;
+
             return controller;
+
         }
 
         /// <summary>
@@ -132,6 +155,10 @@ namespace RobotStudioEngine
                 try
                 {
                     controller = new Controller(networkScanner.Controllers.First(x => x.IsVirtual && x.MacAddress == macAddress.ToString()));
+
+                    controllerEngineResult = ControllerEngineResult.Success;
+
+                    return controller;
                 }
                 catch
                 {
@@ -143,6 +170,10 @@ namespace RobotStudioEngine
                 try
                 {
                     controller = new Controller(networkScanner.Controllers.First(x => !x.IsVirtual && x.MacAddress == macAddress.ToString()));
+
+                    controllerEngineResult = ControllerEngineResult.Success;
+
+                    return controller;
                 }
                 catch
                 {
@@ -170,6 +201,8 @@ namespace RobotStudioEngine
                 MessageBox.Show("No controller found!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
+            controllerEngineResult = ControllerEngineResult.Fail;
+
             return controller;
         }
 
@@ -189,6 +222,10 @@ namespace RobotStudioEngine
                 try
                 {
                     controller = new Controller(networkScanner.Controllers.First(x => x.IsVirtual && x.SystemId == guid));
+
+                    controllerEngineResult = ControllerEngineResult.Success;
+
+                    return controller;
                 }
                 catch
                 {
@@ -200,6 +237,10 @@ namespace RobotStudioEngine
                 try
                 {
                     controller = new Controller(networkScanner.Controllers.First(x => !x.IsVirtual && x.SystemId == guid));
+
+                    controllerEngineResult = ControllerEngineResult.Success;
+
+                    return controller;
                 }
                 catch
                 {
@@ -227,6 +268,8 @@ namespace RobotStudioEngine
                 MessageBox.Show("No controller found!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
+            controllerEngineResult = ControllerEngineResult.Fail;
+
             return controller;
         }
 
@@ -246,6 +289,10 @@ namespace RobotStudioEngine
                 try
                 {
                     controller = new Controller(networkScanner.Controllers.First(x => x.IsVirtual && x.Name == controllerName));
+
+                    controllerEngineResult = ControllerEngineResult.Success;
+
+                    return controller;
                 }
                 catch
                 {
@@ -257,6 +304,10 @@ namespace RobotStudioEngine
                 try
                 {
                     controller = new Controller(networkScanner.Controllers.First(x => !x.IsVirtual && x.Name == controllerName));
+
+                    controllerEngineResult = ControllerEngineResult.Success;
+
+                    return controller;
                 }
                 catch
                 {
@@ -284,11 +335,13 @@ namespace RobotStudioEngine
                 MessageBox.Show("No controller found!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
+            controllerEngineResult = ControllerEngineResult.Fail;
+
             return controller;
         }
 
         /// <summary>
-        /// Returns a Signal from a specified controller.
+        /// Returns a Signal from a specified controller. Returns signal or null
         /// </summary>
         /// <param name="controller">Parse the ABB controller ABB.Robotics.Controllers.Controller. VC or RC</param>
         /// <param name="signalName">Get the signal from the signal Name</param>
@@ -296,11 +349,42 @@ namespace RobotStudioEngine
         {
             Signal signal = null;
 
+            if (controller == null || !controller.Connected)
+            {
+                MessageBox.Show("Controller parsed to \"GetSignal\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return signal;
+            }
+
             IOSystem iOSystem = controller.IOSystem;
 
-            signal = iOSystem.GetSignal(signalName);
+            if (iOSystem.GetSignals(IOFilterTypes.All).Count == 0)
+            {
+                MessageBox.Show("No signals found in the controller.", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-            return signal;
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return signal;
+            }
+
+            try
+            {
+                signal = iOSystem.GetSignal(signalName);
+
+                controllerEngineResult = ControllerEngineResult.Success;
+
+                return signal;
+            }
+            catch
+            {
+                MessageBox.Show("The signal \"" + signalName + "\" does not exist.", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return signal;
+            }
         }
 
         /// <summary>
@@ -311,7 +395,31 @@ namespace RobotStudioEngine
         {
             SignalCollection signals = null;
 
-            return signals;
+            if (controller == null || !controller.Connected)
+            {
+                MessageBox.Show("Controller parsed to \"GetAllSignal\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return signals;
+            }
+
+            IOSystem iOSystem = controller.IOSystem;
+
+            if (iOSystem.GetSignals(IOFilterTypes.All).Count == 0)
+            {
+                MessageBox.Show("No signals found in the controller.", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return signals;
+            }
+            else
+            {
+                controllerEngineResult = ControllerEngineResult.Success;
+
+                return iOSystem.GetSignals(IOFilterTypes.All);
+            }
         }
 
         /// <summary>
@@ -322,7 +430,31 @@ namespace RobotStudioEngine
         {
             SignalCollection signals = null;
 
-            return signals;
+            if (controller == null || !controller.Connected)
+            {
+                MessageBox.Show("Controller parsed to \"GetAllDigialSignal\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return signals;
+            }
+
+            IOSystem iOSystem = controller.IOSystem;
+
+            if (iOSystem.GetSignals(IOFilterTypes.Digital).Count == 0)
+            {
+                MessageBox.Show("No Digital signals found in the controller.", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return signals;
+            }
+            else
+            {
+                controllerEngineResult = ControllerEngineResult.Success;
+
+                return iOSystem.GetSignals(IOFilterTypes.Digital);
+            }
         }
 
         /// <summary>
@@ -333,7 +465,31 @@ namespace RobotStudioEngine
         {
             SignalCollection signals = null;
 
-            return signals;
+            if (controller == null || !controller.Connected)
+            {
+                MessageBox.Show("Controller parsed to \"GetAllAnalogSignal\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return signals;
+            }
+
+            IOSystem iOSystem = controller.IOSystem;
+
+            if (iOSystem.GetSignals(IOFilterTypes.Analog).Count == 0)
+            {
+                MessageBox.Show("No Analog signals found in the controller.", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return signals;
+            }
+            else
+            {
+                controllerEngineResult = ControllerEngineResult.Success;
+
+                return iOSystem.GetSignals(IOFilterTypes.Analog);
+            }
         }
 
         /// <summary>
@@ -344,7 +500,31 @@ namespace RobotStudioEngine
         {
             SignalCollection signals = null;
 
-            return signals;
+            if (controller == null || !controller.Connected)
+            {
+                MessageBox.Show("Controller parsed to \"GetAllGroupSignal\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return signals;
+            }
+
+            IOSystem iOSystem = controller.IOSystem;
+
+            if (iOSystem.GetSignals(IOFilterTypes.Group).Count == 0)
+            {
+                MessageBox.Show("No Group signals found in the controller.", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return signals;
+            }
+            else
+            {
+                controllerEngineResult = ControllerEngineResult.Success;
+
+                return iOSystem.GetSignals(IOFilterTypes.Group);
+            }
         }
 
         /// <summary>
@@ -355,7 +535,42 @@ namespace RobotStudioEngine
         {
             SignalCollection signals = null;
 
-            return signals;
+            if (controller == null || !controller.Connected)
+            {
+                MessageBox.Show("Controller parsed to \"GetDigitalInputs\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return signals;
+            }
+
+            IOSystem iOSystem = controller.IOSystem;
+
+            if (iOSystem.GetSignals(IOFilterTypes.Digital).Count == 0)
+            {
+                MessageBox.Show("No Digital signals found in the controller.", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return signals;
+            }
+            else
+            {
+                try
+                {
+                    controllerEngineResult = ControllerEngineResult.Success;
+
+                    return (SignalCollection)iOSystem.GetSignals(IOFilterTypes.Digital).Where(x => x.Type == SignalType.DigitalInput);
+                }
+                catch
+                {
+                    MessageBox.Show("No DI signals found in the controller.", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    controllerEngineResult = ControllerEngineResult.Fail;
+
+                    return signals;
+                }
+            }
         }
 
         /// <summary>
@@ -366,7 +581,42 @@ namespace RobotStudioEngine
         {
             SignalCollection signals = null;
 
-            return signals;
+            if (controller == null || !controller.Connected)
+            {
+                MessageBox.Show("Controller parsed to \"GetDigitalOutputs\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return signals;
+            }
+
+            IOSystem iOSystem = controller.IOSystem;
+
+            if (iOSystem.GetSignals(IOFilterTypes.Digital).Count == 0)
+            {
+                MessageBox.Show("No Digital signals found in the controller.", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return signals;
+            }
+            else
+            {
+                try
+                {
+                    controllerEngineResult = ControllerEngineResult.Success;
+
+                    return (SignalCollection)iOSystem.GetSignals(IOFilterTypes.Digital).Where(x => x.Type == SignalType.DigitalOutput);
+                }
+                catch
+                {
+                    MessageBox.Show("No DO signals found in the controller.", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    controllerEngineResult = ControllerEngineResult.Fail;
+
+                    return signals;
+                }
+            }
         }
 
         /// <summary>
@@ -377,7 +627,42 @@ namespace RobotStudioEngine
         {
             SignalCollection signals = null;
 
-            return signals;
+            if (controller == null || !controller.Connected)
+            {
+                MessageBox.Show("Controller parsed to \"GetAnalogInputs\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return signals;
+            }
+
+            IOSystem iOSystem = controller.IOSystem;
+
+            if (iOSystem.GetSignals(IOFilterTypes.Analog).Count == 0)
+            {
+                MessageBox.Show("No Analog signals found in the controller.", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return signals;
+            }
+            else
+            {
+                try
+                {
+                    controllerEngineResult = ControllerEngineResult.Success;
+
+                    return (SignalCollection)iOSystem.GetSignals(IOFilterTypes.Analog).Where(x => x.Type == SignalType.AnalogInput);
+                }
+                catch
+                {
+                    MessageBox.Show("No AI signals found in the controller.", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    controllerEngineResult = ControllerEngineResult.Fail;
+
+                    return signals;
+                }
+            }
         }
 
         /// <summary>
@@ -388,7 +673,42 @@ namespace RobotStudioEngine
         {
             SignalCollection signals = null;
 
-            return signals;
+            if (controller == null || !controller.Connected)
+            {
+                MessageBox.Show("Controller parsed to \"GetAnalogOutputs\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return signals;
+            }
+
+            IOSystem iOSystem = controller.IOSystem;
+
+            if (iOSystem.GetSignals(IOFilterTypes.Analog).Count == 0)
+            {
+                MessageBox.Show("No Analog signals found in the controller.", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return signals;
+            }
+            else
+            {
+                try
+                {
+                    controllerEngineResult = ControllerEngineResult.Success;
+
+                    return (SignalCollection)iOSystem.GetSignals(IOFilterTypes.Analog).Where(x => x.Type == SignalType.AnalogOutput);
+                }
+                catch
+                {
+                    MessageBox.Show("No AO signals found in the controller.", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    controllerEngineResult = ControllerEngineResult.Fail;
+
+                    return signals;
+                }
+            }
         }
 
         /// <summary>
@@ -399,7 +719,42 @@ namespace RobotStudioEngine
         {
             SignalCollection signals = null;
 
-            return signals;
+            if (controller == null || !controller.Connected)
+            {
+                MessageBox.Show("Controller parsed to \"GetGroupOutputs\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return signals;
+            }
+
+            IOSystem iOSystem = controller.IOSystem;
+
+            if (iOSystem.GetSignals(IOFilterTypes.Group).Count == 0)
+            {
+                MessageBox.Show("No Group signals found in the controller.", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return signals;
+            }
+            else
+            {
+                try
+                {
+                    controllerEngineResult = ControllerEngineResult.Success;
+
+                    return (SignalCollection)iOSystem.GetSignals(IOFilterTypes.Group).Where(x => x.Type == SignalType.GroupOutput);
+                }
+                catch
+                {
+                    MessageBox.Show("No GO signals found in the controller.", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    controllerEngineResult = ControllerEngineResult.Fail;
+
+                    return signals;
+                }
+            }
         }
 
         /// <summary>
@@ -410,7 +765,141 @@ namespace RobotStudioEngine
         {
             SignalCollection signals = null;
 
-            return signals;
+            if (controller == null || !controller.Connected)
+            {
+                MessageBox.Show("Controller parsed to \"GetGroupInputs\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return signals;
+            }
+
+            IOSystem iOSystem = controller.IOSystem;
+
+            if (iOSystem.GetSignals(IOFilterTypes.Group).Count == 0)
+            {
+                MessageBox.Show("No Group signals found in the controller.", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return signals;
+            }
+            else
+            {
+                try
+                {
+                    controllerEngineResult = ControllerEngineResult.Fail;
+
+                    return (SignalCollection)iOSystem.GetSignals(IOFilterTypes.Group).Where(x => x.Type == SignalType.GroupInput);
+                }
+                catch
+                {
+                    MessageBox.Show("No GI signals found in the controller.", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                    controllerEngineResult = ControllerEngineResult.Fail;
+
+                    return signals;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Adds a new signal into a specified controller.
+        /// </summary>
+        /// <param name="controller">Parse the ABB controller ABB.Robotics.Controllers.Controller. VC or RC</param>
+        /// <param name="signal">The new signal to be added to the controller</param>
+        private bool AddNewSignal(Controller controller, Signal signal)
+        {
+            if (controller == null || !controller.Connected)
+            {
+                MessageBox.Show("Controller parsed to \"LoadModule\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Adds a new signal into a specified controller.
+        /// </summary>
+        /// <param name="controller">Parse the ABB controller ABB.Robotics.Controllers.Controller. VC or RC</param>
+        /// <param name="signalName">The name of the new signal to be added to the controller</param>
+        /// <param name="signalType">The type of signal to be added to the controller</param>
+        /// <param name="valueInverted">Specifies if the new signals default value is inverted</param>
+        /// <param name="unit">Specifies the name of the IO Unit the new signals defined to inverted</param>
+        /// <param name="mapping">Specifies the mapped value (bit) of the new signal in the IO unit</param>
+        private bool AddNewSignal(Controller controller, string signalName, SignalType signalType, bool valueInverted, string unit, int mapping)
+        {
+            if (controller == null || !controller.Connected)
+            {
+                MessageBox.Show("Controller parsed to \"LoadModule\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Adds a new collection of signals into a specified controller.
+        /// </summary>
+        /// <param name="controller">Parse the ABB controller ABB.Robotics.Controllers.Controller. VC or RC</param>
+        /// <param name="signals">The new collection of signal to be added to the controller</param>
+        private bool AddNewSignals(Controller controller, SignalCollection signals)
+        {
+            if (controller == null || !controller.Connected)
+            {
+                MessageBox.Show("Controller parsed to \"LoadModule\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Deletes a signal from a specified controller.
+        /// </summary>
+        /// <param name="controller">Parse the ABB controller ABB.Robotics.Controllers.Controller. VC or RC</param>
+        /// <param name="signal">The signal to be deleted from the controller</param>
+        private bool DeleteSignal(Controller controller, Signal signal)
+        {
+            if (controller == null || !controller.Connected)
+            {
+                MessageBox.Show("Controller parsed to \"LoadModule\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Deletes a collection signal into a specified controller.
+        /// </summary>
+        /// <param name="controller">Parse the ABB controller ABB.Robotics.Controllers.Controller. VC or RC</param>
+        /// <param name="signals">The collection of signal to be deleted from the controller</param>
+        private bool DeleteSignals(Controller controller, SignalCollection signals)
+        {
+            if (controller == null || !controller.Connected)
+            {
+                MessageBox.Show("Controller parsed to \"LoadModule\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return false;
+            }
+
+            return true;
         }
 
         /// <summary>
@@ -420,6 +909,15 @@ namespace RobotStudioEngine
         /// <param name="moduleLocation">The directory of module (*.mod)</param>
         public bool LoadModule(Controller controller, string moduleLocation)
         {
+            if (controller == null || !controller.Connected)
+            {
+                MessageBox.Show("Controller parsed to \"LoadModule\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return false;
+            }
+
             return true;
         }
 
@@ -430,16 +928,34 @@ namespace RobotStudioEngine
         /// <param name="programLocation">The directory of program (*.prg)</param>
         public bool LoadProgram(Controller controller, string programLocation)
         {
+            if (controller == null || !controller.Connected)
+            {
+                MessageBox.Show("Controller parsed to \"LoadModule\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return false;
+            }
+
             return true;
         }
 
         /// <summary>
-        /// Loads a program into a specified controller.
+        /// Loads a configuration file into a specified controller.
         /// </summary>
         /// <param name="controller">Parse the ABB controller ABB.Robotics.Controllers.Controller. VC or RC</param>
         /// <param name="cfgLocation">The directory of configuration file (*.cfg)</param>
-        public bool LoadConfiguration(Controller controller, string cfgLocation)
+        public bool LoadControllerConfiguration(Controller controller, string cfgLocation)
         {
+            if (controller == null || !controller.Connected)
+            {
+                MessageBox.Show("Controller parsed to \"LoadModule\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+                controllerEngineResult = ControllerEngineResult.Fail;
+
+                return false;
+            }
+
             return true;
         }
     }
