@@ -921,6 +921,8 @@ namespace RobotStudioEngine
         /// <param name="mapping">Specifies the mapped value (bit) of the new signal in the IO unit</param>
         private bool AddNewSignal(Controller controller, string signalName, SignalType signalType, bool valueInverted, string unit, int mapping)
         {
+            return false; // Temporary
+
             if (controller == null || !controller.Connected)
             {
                 MessageBox.Show("Controller parsed to \"LoadModule\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -940,6 +942,8 @@ namespace RobotStudioEngine
         /// <param name="signals">The new collection of signal to be added to the controller</param>
         private bool AddNewSignals(Controller controller, SignalCollection signals)
         {
+            return false; // Temporary
+
             if (controller == null || !controller.Connected)
             {
                 MessageBox.Show("Controller parsed to \"LoadModule\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -959,6 +963,8 @@ namespace RobotStudioEngine
         /// <param name="signal">The signal to be deleted from the controller</param>
         private bool DeleteSignal(Controller controller, Signal signal)
         {
+            return false; // Temporary
+
             if (controller == null || !controller.Connected)
             {
                 MessageBox.Show("Controller parsed to \"LoadModule\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -978,6 +984,8 @@ namespace RobotStudioEngine
         /// <param name="signals">The collection of signal to be deleted from the controller</param>
         private bool DeleteSignals(Controller controller, SignalCollection signals)
         {
+            return false; // Temporary
+
             if (controller == null || !controller.Connected)
             {
                 MessageBox.Show("Controller parsed to \"LoadModule\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -997,6 +1005,8 @@ namespace RobotStudioEngine
         /// <param name="moduleLocation">The directory of module (*.mod)</param>
         public bool LoadModule(Controller controller, string moduleLocation)
         {
+            return false; // Temporary
+
             if (controller == null || !controller.Connected)
             {
                 MessageBox.Show("Controller parsed to \"LoadModule\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -1016,6 +1026,8 @@ namespace RobotStudioEngine
         /// <param name="programLocation">The directory of program (*.prg)</param>
         public bool LoadProgram(Controller controller, string programLocation)
         {
+            return false; // Temporary
+
             if (controller == null || !controller.Connected)
             {
                 MessageBox.Show("Controller parsed to \"LoadModule\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -1035,6 +1047,8 @@ namespace RobotStudioEngine
         /// <param name="cfgLocation">The directory of configuration file (*.cfg)</param>
         public bool LoadControllerConfiguration(Controller controller, string cfgLocation)
         {
+            return false; // Temporary
+
             if (controller == null || !controller.Connected)
             {
                 MessageBox.Show("Controller parsed to \"LoadModule\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
