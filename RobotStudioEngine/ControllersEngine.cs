@@ -2,14 +2,11 @@
 using ABB.Robotics.Controllers.Discovery;
 using ABB.Robotics.Controllers.IOSystemDomain;
 using ABB.Robotics.RobotStudio.Controllers;
-using ABB.Robotics.RobotStudio.Stations;
+using RobotStudio.UI.Controller;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace RobotStudioEngine
@@ -788,7 +785,7 @@ namespace RobotStudioEngine
             {
                 try
                 {
-                    controllerEngineResult = ControllerEngineResult.Fail;
+                    controllerEngineResult = ControllerEngineResult.Success;
 
                     return (SignalCollection)iOSystem.GetSignals(IOFilterTypes.Group).Where(x => x.Type == SignalType.GroupInput);
                 }
@@ -810,16 +807,107 @@ namespace RobotStudioEngine
         /// <param name="signal">The new signal to be added to the controller</param>
         private bool AddNewSignal(Controller controller, Signal signal)
         {
-            if (controller == null || !controller.Connected)
-            {
-                MessageBox.Show("Controller parsed to \"LoadModule\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return false;
 
-                controllerEngineResult = ControllerEngineResult.Fail;
+            //if (controller == null || !controller.Connected)
+            //{
+            //    MessageBox.Show("Controller parsed to \"AddNewSignal\" is not connected!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-                return false;
-            }
+            //    controllerEngineResult = ControllerEngineResult.Fail;
 
-            return true;
+            //    return false;
+            //}
+
+            //if (signal == null)
+            //{
+            //    MessageBox.Show("Signal parsed to \"AddNewSignal\" is null!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            //    controllerEngineResult = ControllerEngineResult.Fail;
+
+            //    return false;
+            //}
+
+            //if (string.IsNullOrEmpty(signal.Name))
+            //{
+            //    MessageBox.Show("Signal parsed to \"AddNewSignal\" does not have a name value!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            //    controllerEngineResult = ControllerEngineResult.Fail;
+
+            //    return false;
+            //}
+
+            //if (signal.Type != SignalType.AnalogInput && signal.Type != SignalType.AnalogOutput && signal.Type != SignalType.DigitalInput && signal.Type != SignalType.DigitalOutput && signal.Type != SignalType.GroupInput && signal.Type != SignalType.GroupOutput && signal.Type != SignalType.Unknown)
+            //{
+            //    MessageBox.Show("Signal parsed to \"AddNewSignal\" does not have a signal type assigned!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            //    controllerEngineResult = ControllerEngineResult.Fail;
+
+            //    return false;
+            //}
+
+            //if (string.IsNullOrEmpty(signal.Unit))
+            //{
+            //    MessageBox.Show("Signal parsed to \"AddNewSignal\" does not have a Unit value!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            //    controllerEngineResult = ControllerEngineResult.Fail;
+
+            //    return false;
+            //}
+
+            //if (string.IsNullOrEmpty(signal.Unit))
+            //{
+            //    MessageBox.Show("Signal parsed to \"AddNewSignal\" does not have a Unit value!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            //    controllerEngineResult = ControllerEngineResult.Fail;
+
+            //    return false;
+            //}
+
+            //if (!controller.IOSystem.GetUnits().Any(x => x.Name == signal.Unit))
+            //{
+            //    MessageBox.Show("Unit does not exist in Signal parsed to \"AddNewSignal\"!", "RobotStudioEngine", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            //    controllerEngineResult = ControllerEngineResult.Fail;
+
+            //    return false;
+            //}
+
+            //string error = (string)null;
+
+            //try
+            //{
+            //    string signalType = signal.Type.ToString();
+
+            //    controller.MastershipPolicy = ControllerMastershipPolicy.Automatic;
+            //    controller.Logon(UserInfo.DefaultUser);
+            //    Mastership.Request(controller);
+
+            //    error = signal.Name;
+
+            //    //controller.Configuration.SetAttributeValue("EIO", "EIO_SIGNAL", signal.Name, rw6 ? "Device" : "Unit", (object)this.comboUnit.Text);
+            //    //controller.Configuration.SetAttributeValue("EIO", "EIO_SIGNAL", signal.Name, rw6 ? "DeviceMap" : "UnitMap", (object)signal.UnitMap);
+            //    //controller.Configuration.SetAttributeValue("EIO", "EIO_SIGNAL", signal.Name, "Invert", (object)this.checkInvert.Checked);
+
+            //    //controller.Configuration.SetAttributeValue("EIO", "EIO_SIGNAL", signal.Name, rw6 ? "Label" : "SignalLabel", (object)this.textLabel.Text);
+            //    //controller.Configuration.SetAttributeValue("EIO", "EIO_SIGNAL", signal.Name, "Category", (object)this.textCategory.Text);
+            //    //controller.Configuration.SetAttributeValue("EIO", "EIO_SIGNAL", signal.Name, "SignalType", (object)signalType);
+            //    //controller.Configuration.SetAttributeValue("EIO", "EIO_SIGNAL", signal.Name, "Default", (object)(float)this.numericDefault.Value);
+            //    //controller.Configuration.SetAttributeValue("EIO", "EIO_SIGNAL", signal.Name, "Access", (object)this.comboAccessLevel.Text);
+
+            //    //if (!rw6)
+            //    //{
+            //    //    this._conn.Configuration.SetAttributeValue("EIO", "EIO_SIGNAL", signal.Name, "Store", (object)this.checkStore.Checked);
+            //    //    this._conn.Configuration.SetAttributeValue("EIO", "EIO_SIGNAL", signal.Name, "SysfailReset", (object)(this.comboFailValue.SelectedIndex == 0));
+            //    //}
+            //    signal = null;
+
+            //}
+            //catch (Exception ex)
+            //{
+
+            //}
+
+            //return true;
         }
 
         /// <summary>
