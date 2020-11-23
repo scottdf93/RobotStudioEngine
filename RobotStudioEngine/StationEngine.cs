@@ -26,11 +26,9 @@ namespace RobotStudioEngine
 
                 int nCounter = 0;
 
-                object[] objArray = selectedObjects;
-
-                for (int index = 0; index < objArray.Length; ++index)
+                for (int index = 0; index < selectedObjects.Length; ++index)
                 {
-                    object obj = objArray[index];
+                    object obj = selectedObjects[index];
                     Transform tf = GetObjectTransform(obj);
                     if (tf != null)
                     {
@@ -43,7 +41,7 @@ namespace RobotStudioEngine
                     obj = null;
                 }
 
-                objArray = null;
+                selectedObjects = null;
 
                 if (nCounter > 0)
                 {
