@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\RobotStudioEngine.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -88,9 +89,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\Enumerations\RobotStudioEngineResults.cs" />
+    <Compile Include="Common\EventArguments\ControllerCallBackEventArgs.cs" />
     <Compile Include="ControllersEngine.cs" />
     <Compile Include="EngineData.cs" />
     <Compile Include="EnviromentEngine.cs" />
+    <Compile Include="IControllers.cs" />
+    <Compile Include="IEnviroment.cs" />
+    <Compile Include="IStation.cs" />
     <Compile Include="StationEngine.cs" />
     <Compile Include="TestForm.cs">
       <SubType>Form</SubType>

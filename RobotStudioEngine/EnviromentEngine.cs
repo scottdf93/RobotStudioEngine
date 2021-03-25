@@ -13,7 +13,7 @@ using ABB.Robotics.RobotStudio.Stations.Forms;
 
 namespace RobotStudioEngine
 {
-    class EnviromentEngine
+    class EnviromentEngine : IEnviroment
     {
     }
 }

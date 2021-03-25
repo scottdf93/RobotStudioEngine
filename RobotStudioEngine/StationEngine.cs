@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace RobotStudioEngine
 {
-    public class StationEngine
+    public class StationEngine : IStation
     {
         /// <summary>
         /// Repositions an object between two frames.
